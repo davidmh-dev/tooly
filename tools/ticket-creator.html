@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooly - Agile Ticket Generator</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #3b82f6;
+            --border: #334155;
+            --bug: #ef4444;
+            --task: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            padding: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active.story {
+            background: var(--accent);
+            color: white;
+        }
+
+        .tab-btn.active.bug {
+            background: var(--bug);
+            color: white;
+        }
+
+        .tab-btn.active.task {
+            background: var(--task);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #cbd5e1;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 6px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        button.main-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 20px;
+        }
+
+        button.main-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        #result-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        pre {
+            background: #000;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .copy-btn:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🎯 Agile Ticket Generator</h1>
+        <p class="subtitle">Millimeter-precise structures for Jira, GitHub, or Trello</p>
+
+        <div class="tabs">
+            <button class="tab-btn story active" onclick="openTab(event, 'story')">📘 User Story</button>
+            <button class="tab-btn bug" onclick="openTab(event, 'bug')">🐞 Bug Report</button>
+            <button class="tab-btn task" onclick="openTab(event, 'task')">⚙️ Tech Task</button>
+        </div>
+
+        <div id="story" class="tab-content active">
+            <div class="form-group">
+                <label>Ticket Title</label>
+                <input type="text" id="us-title" placeholder="e.g. Add PDF export button">
+            </div>
+            <div class="grid form-group">
+                <div class="full-width"><label>AS A... (User Role)</label><input type="text" id="us-role"
+                        placeholder="e.g. registered user"></div>
+                <div class="full-width"><label>I WANT TO... (Action)</label><input type="text" id="us-action"
+                        placeholder="e.g. export my invoices as PDF"></div>
+                <div class="full-width"><label>SO THAT... (Business Value / Benefit)</label><input type="text"
+                        id="us-benefit" placeholder="e.g. I can email them to my accountant"></div>
+            </div>
+            <div class="form-group">
+                <label>Acceptance Criteria (Gherkin Format: Given / When / Then)</label>
+                <textarea id="us-ac" rows="4"
+                    placeholder="- Given I am on the invoices screen, When I click 'Export', Then a PDF file downloads."></textarea>
+            </div>
+            <button class="main-btn" style="background: var(--accent)" onclick="generateTicket('story')">Generate
+                Story</button>
+        </div>
+
+        <div id="bug" class="tab-content">
+            <div class="form-group">
+                <label>Bug Title</label>
+                <input type="text" id="bug-title" placeholder="e.g. 500 Error when trying to upload profile picture">
+            </div>
+            <div class="grid form-group">
+                <div>
+                    <label>Severity</label>
+                    <select id="bug-severity">
+                        <option>Blocker (Critical)</option>
+                        <option>Major (High)</option>
+                        <option>Minor (Low)</option>
+                        <option>Trivial (Cosmetic)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Environment</label>
+                    <input type="text" id="bug-env" placeholder="e.g. Chrome 114, Windows 11, Production">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Steps to Reproduce</label>
+                <textarea id="bug-steps" rows="3"
+                    placeholder="1. Go to profile&#10;2. Click on change photo&#10;3. Select a large .png file"></textarea>
+            </div>
+            <div class="grid form-group">
+                <div><label>Expected Behavior</label><textarea id="bug-expected" rows="2"
+                        placeholder="The image uploads successfully."></textarea></div>
+                <div><label>Actual Behavior (Failure)</label><textarea id="bug-actual" rows="2"
+                        placeholder="The screen goes blank and throws a 500 error."></textarea></div>
+            </div>
+            <button class="main-btn" style="background: var(--bug)" onclick="generateTicket('bug')">Generate Bug
+                Report</button>
+        </div>
+
+        <div id="task" class="tab-content">
+            <div class="form-group">
+                <label>Task Title</label>
+                <input type="text" id="task-title" placeholder="e.g. Migrate database to PostgreSQL 15">
+            </div>
+            <div class="form-group">
+                <label>Context / Why we are doing this (Tech Value)</label>
+                <textarea id="task-context" rows="3"
+                    placeholder="The current DB version deprecates next month and we need advanced JSONB support."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Requirements / Checklist</label>
+                <textarea id="task-reqs" rows="3"
+                    placeholder="- Backup current DB.&#10;- Update ORM dependencies.&#10;- Run migration scripts."></textarea>
+            </div>
+            <button class="main-btn" style="background: var(--task)" onclick="generateTicket('task')">Generate Tech
+                Task</button>
+        </div>
+
+        <div id="result-container">
+            <pre id="output"></pre>
+            <button class="copy-btn" onclick="copyToClipboard()">📋 Copy Markdown Ticket</button>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            const contents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < contents.length; i++) contents[i].classList.remove("active");
+
+            const tabs = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            document.getElementById("result-container").style.display = "none";
+        }
+
+        function generateTicket(type) {
+            let md = "";
+            const v = (id) => document.getElementById(id).value;
+
+            if (type === 'story') {
+                const title = v('us-title') || 'User Story';
+                md = `## 📘 [STORY] ${title}\n\n`;
+                md += `### 📝 Description\n`;
+                md += `**AS A** ${v('us-role') || '[Role]'}\n`;
+                md += `**I WANT TO** ${v('us-action') || '[Action]'}\n`;
+                md += `**SO THAT** ${v('us-benefit') || '[Benefit]'}\n\n`;
+                md += `### ✅ Acceptance Criteria\n`;
+                md += `${v('us-ac') || 'Add criteria (Given / When / Then)'}\n`;
+            }
+            else if (type === 'bug') {
+                const title = v('bug-title') || 'Bug Report';
+                md = `## 🐞 [BUG] ${title}\n\n`;
+                md += `**Severity:** ${v('bug-severity')}\n`;
+                md += `**Environment:** \`${v('bug-env') || 'Not specified'}\`\n\n`;
+                md += `### 🔄 Steps to Reproduce\n`;
+                md += `${v('bug-steps') || '1. \n2. \n3. '}\n\n`;
+                md += `### 🎯 Expected Behavior\n`;
+                md += `${v('bug-expected') || 'What should happen.'}\n\n`;
+                md += `### ❌ Actual Behavior\n`;
+                md += `${v('bug-actual') || 'What actually happens.'}\n`;
+            }
+            else if (type === 'task') {
+                const title = v('task-title') || 'Tech Task';
+                md = `## ⚙️ [TASK] ${title}\n\n`;
+                md += `### 🧠 Technical Context\n`;
+                md += `${v('task-context') || 'Explain why this task is necessary.'}\n\n`;
+                md += `### 📋 Requirements / Checklist\n`;
+                md += `${v('task-reqs') || '- [ ] Task 1'}\n`;
+            }
+
+            document.getElementById('output').textContent = md;
+            document.getElementById('result-container').style.display = 'block';
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(document.getElementById('output').textContent);
+            alert('Ticket copied! Paste it directly into Jira, GitHub, or Trello.');
+        }
+    </script>
+
+</body>
+
+</html>

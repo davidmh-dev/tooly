@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Favicon Gen</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            text-align: center;
+        }
+
+        canvas {
+            display: none;
+        }
+
+        #preview {
+            font-size: 50px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container"
+        style="background:var(--card); padding:30px; border-radius:12px; border:1px solid var(--border);">
+        <h1 style="color:var(--accent);">Favicon Generator</h1>
+        <input type="text" id="emoji" placeholder="Type an emoji or letter" maxlength="2"
+            style="padding:15px; font-size:2rem; width:100px; text-align:center; background:#000; color:#fff; border:1px solid var(--border);">
+        <br><br>
+        <button onclick="gen()"
+            style="padding:15px 30px; background:var(--accent); border:none; font-weight:bold; cursor:pointer; border-radius:6px;">Download
+            32x32 Favicon</button>
+        <canvas id="c" width="32" height="32"></canvas>
+    </div>
+    <script>
+        function gen() {
+            const char = document.getElementById('emoji').value || "T";
+            const c = document.getElementById('c');
+            const ctx = c.getContext('2d');
+            ctx.clearRect(0, 0, 32, 32);
+            ctx.font = "24px serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(char, 16, 18);
+            const link = document.createElement('a');
+            link.download = 'favicon.png';
+            link.href = c.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+
+</html>

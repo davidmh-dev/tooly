@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Palette Extractor</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #fb923c;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        #swatches {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .swatch {
+            flex: 1;
+            height: 100px;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 5px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container"
+        style="background:var(--card); padding:30px; border-radius:12px; border:1px solid var(--border);">
+        <h1 style="color:var(--accent);">Color Palette Extractor</h1>
+        <input type="file" accept="image/*" onchange="extract(this.files[0])">
+        <div id="swatches"></div>
+    </div>
+    <script>
+        function extract(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const c = document.createElement('canvas');
+                    const ctx = c.getContext('2d');
+                    c.width = 50; c.height = 50;
+                    ctx.drawImage(img, 0, 0, 50, 50);
+                    const data = ctx.getImageData(0, 0, 50, 50).data;
+                    const sw = document.getElementById('swatches');
+                    sw.innerHTML = "";
+                    for (let i = 0; i < 5; i++) {
+                        const r = data[i * 100], g = data[i * 100 + 1], b = data[i * 100 + 2];
+                        const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                        sw.innerHTML += `<div class="swatch" style="background:${hex}">${hex}</div>`;
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+
+</html>

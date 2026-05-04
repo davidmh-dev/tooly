@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Identity Generator</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #f59e0b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input,
+        select,
+        button {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: #000;
+            color: white;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        button {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .name-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .name-card:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); margin-top: 0;">Identity Name Generator</h1>
+        <p style="color:#94a3b8; margin-bottom: 25px;">Mix professional terms with your own keywords to find the perfect
+            brand.</p>
+
+        <div class="controls">
+            <input type="text" id="keyword" placeholder="Optional keyword (e.g. Pizza)">
+            <select id="style">
+                <option value="tech">Modern Tech</option>
+                <option value="creative">Creative Studio</option>
+                <option value="minimal">Minimalist</option>
+            </select>
+            <button onclick="generateNames()">Generate</button>
+        </div>
+
+        <div class="grid" id="results"></div>
+    </div>
+
+    <script>
+        const library = {
+            prefixes: {
+                tech: ['Cyber', 'Nexus', 'Bit', 'Cloud', 'Logic', 'Sync', 'Quantum', 'Flow', 'Volt', 'Data'],
+                creative: ['Luna', 'Wild', 'Studio', 'Velvet', 'Neon', 'Pixel', 'Draft', 'Vibe', 'Artisan', 'Bloom'],
+                minimal: ['Uno', 'Zen', 'Pure', 'Bare', 'Core', 'Base', 'Apex', 'Nord', 'Solo', 'Meta']
+            },
+            suffixes: {
+                tech: ['Labs', 'Systems', 'Node', 'Stack', 'Hub', 'Grid', 'Link', 'Forge', 'Path', 'Flow'],
+                creative: ['Collective', 'Agency', 'Media', 'House', 'Vision', 'Craft', 'Design', 'Story', 'Space', 'Box'],
+                minimal: ['Co', 'Inc', 'Unit', 'Mark', 'Line', 'Point', 'Site', 'Way', 'Key', 'Bit']
+            }
+        };
+
+        function generateNames() {
+            const style = document.getElementById('style').value;
+            const keyword = document.getElementById('keyword').value.trim();
+            const container = document.getElementById('results');
+            container.innerHTML = '';
+
+            const pre = library.prefixes[style];
+            const suf = library.suffixes[style];
+
+            for (let i = 0; i < 15; i++) {
+                let finalName = "";
+
+                if (keyword !== "") {
+                    // Si hay palabra clave, decidimos aleatoriamente si va delante o detrás
+                    if (Math.random() > 0.5) {
+                        const s = suf[Math.floor(Math.random() * suf.length)];
+                        finalName = keyword.charAt(0).toUpperCase() + keyword.slice(1) + s;
+                    } else {
+                        const p = pre[Math.floor(Math.random() * pre.length)];
+                        finalName = p + keyword.charAt(0).toUpperCase() + keyword.slice(1);
+                    }
+                } else {
+                    // Si no hay palabra clave, mezcla normal de la librería
+                    const p = pre[Math.floor(Math.random() * pre.length)];
+                    const s = suf[Math.floor(Math.random() * suf.length)];
+                    finalName = p + s;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'name-card';
+                div.innerHTML = `<span class="tag">${style}</span><strong>${finalName}</strong>`;
+                div.onclick = () => {
+                    navigator.clipboard.writeText(finalName);
+                    const originalText = div.innerHTML;
+                    div.innerHTML = `<span class="tag" style="color:#10b981">Copied!</span><strong>Saved</strong>`;
+                    setTimeout(() => { div.innerHTML = originalText; }, 1000);
+                };
+                container.appendChild(div);
+            }
+        }
+
+        // Inicializar al cargar
+        generateNames();
+    </script>
+</body>
+
+</html>

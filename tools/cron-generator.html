@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooly - CRON Generator</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #06b6d4;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        label {
+            display: block;
+            text-align: center;
+            font-weight: bold;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 6px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.2rem;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 2.5rem;
+            text-align: center;
+            font-family: monospace;
+            color: var(--accent);
+            font-weight: bold;
+            background: #000;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #334155;
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>⏱️ CRON Generator</h1>
+        <p class="subtitle">Build CRON expressions visually for your automated tasks</p>
+        <div class="grid">
+            <div><label>Minute</label><input type="text" id="min" value="*" oninput="updateCron()"></div>
+            <div><label>Hour</label><input type="text" id="hr" value="*" oninput="updateCron()"></div>
+            <div><label>Day (Month)</label><input type="text" id="dom" value="*" oninput="updateCron()"></div>
+            <div><label>Month</label><input type="text" id="mon" value="*" oninput="updateCron()"></div>
+            <div><label>Day (Week)</label><input type="text" id="dow" value="*" oninput="updateCron()"></div>
+        </div>
+        <div class="result" id="output">* * * * *</div>
+        <button onclick="copyCron()">📋 Copy Expression</button>
+    </div>
+    <script>
+        function updateCron() {
+            const v = id => document.getElementById(id).value || '*';
+            document.getElementById('output').innerText = `${v('min')} ${v('hr')} ${v('dom')} ${v('mon')} ${v('dow')}`;
+        }
+        function copyCron() {
+            navigator.clipboard.writeText(document.getElementById('output').innerText);
+            alert("CRON copied!");
+        }
+    </script>
+</body>
+
+</html>

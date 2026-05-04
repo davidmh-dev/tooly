@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Image Converter</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #10b981;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        #drop-zone {
+            border: 2px dashed var(--border);
+            padding: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #drop-zone:hover {
+            border-color: var(--accent);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        select {
+            margin: 20px 0;
+            padding: 10px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); margin-top:0;">Image Converter</h1>
+        <div id="drop-zone" onclick="document.getElementById('fileIn').click()">
+            Drop image here or click to upload
+            <input type="file" id="fileIn" hidden accept="image/*" onchange="convert(this.files[0])">
+        </div>
+        <select id="format">
+            <option value="image/webp">To WebP</option>
+            <option value="image/png">To PNG</option>
+        </select>
+        <div id="preview"></div>
+    </div>
+    <script>
+        function convert(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    const format = document.getElementById('format').value;
+                    const link = document.createElement('a');
+                    link.download = `converted-${Date.now()}.${format.split('/')[1]}`;
+                    link.href = canvas.toDataURL(format);
+                    link.click();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+
+</html>

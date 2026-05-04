@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Giveaway Picker</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #8b5cf6;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 15px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .config {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 10px;
+            background: #000;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+        }
+
+        #winnersDisplay {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .winner-card {
+            background: linear-gradient(90deg, #8b5cf6, #d946ef);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .confetti {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); margin-top: 0;">Giveaway Winner Picker</h1>
+        <p style="color:#94a3b8; margin-bottom: 25px;">Paste your list of participants (one per line) and let fate
+            decide.</p>
+
+        <textarea id="participants" placeholder="User1&#10;User2&#10;User3..."></textarea>
+
+        <div class="config">
+            <label>Number of winners:</label>
+            <input type="number" id="winnerCount" value="1" min="1">
+            <button onclick="pickWinners()">Pick Winners!</button>
+        </div>
+
+        <div id="winnersDisplay"></div>
+    </div>
+
+    <script>
+        function pickWinners() {
+            const text = document.getElementById('participants').value.trim();
+            const count = parseInt(document.getElementById('winnerCount').value);
+            const display = document.getElementById('winnersDisplay');
+
+            if (!text) { alert("Please enter some participants first!"); return; }
+
+            let list = text.split('\n').map(name => name.trim()).filter(name => name !== "");
+
+            if (list.length === 0) return;
+            if (count > list.length) { alert("Winner count cannot exceed number of participants!"); return; }
+
+            display.innerHTML = '<div class="confetti">🎉</div>';
+
+            // Fisher-Yates Shuffle para aleatoriedad pura
+            for (let i = list.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [list[i], list[j]] = [list[j], list[i]];
+            }
+
+            const winners = list.slice(0, count);
+
+            winners.forEach((winner, index) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'winner-card';
+                    div.innerHTML = `🏆 Winner #${index + 1}: ${winner}`;
+                    display.appendChild(div);
+                }, index * 300); // Efecto de aparición escalonada
+            });
+        }
+    </script>
+</body>
+
+</html>

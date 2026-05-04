@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Comms Builder</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #22c55e;
+            --border: #334155;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .output {
+            background: #000;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent);
+            margin-top: 20px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); text-align:center;">WhatsApp & Mail Linker</h1>
+        <p class="subtitle">Generate one-click WhatsApp and email links with pre-filled messages.<br>
+            Remove customer friction and boost sales engagement instantly.</p>
+        <label>WhatsApp Number (With country code)</label>
+        <input type="text" id="wa-num" placeholder="34600000000" oninput="genWA()">
+        <label>Predefined Message</label>
+        <textarea id="wa-msg" oninput="genWA()" placeholder="Hello! I'm interested in..."></textarea>
+        <div class="output" id="wa-out">https://wa.me/...</div>
+        <button onclick="copy('wa-out')">Copy WhatsApp Link</button>
+    </div>
+    <script>
+        function genWA() {
+            const num = document.getElementById('wa-num').value;
+            const msg = encodeURIComponent(document.getElementById('wa-msg').value);
+            document.getElementById('wa-out').innerText = `https://wa.me/${num}?text=${msg}`;
+        }
+        function copy(id) {
+            navigator.clipboard.writeText(document.getElementById(id).innerText);
+            alert("Link copied!");
+        }
+    </script>
+</body>
+
+</html>

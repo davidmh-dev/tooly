@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Unit Converter</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #fb7185;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent);">Tech Unit Converter</h1>
+        <div class="grid">
+            <input type="number" id="inVal" value="1" oninput="convert()">
+            <select id="mode" onchange="convert()">
+                <option value="pxrem">Pixels to REM (16px base)</option>
+                <option value="gbtb">GB to TB</option>
+                <option value="mbpsmbs">Mbps to MB/s</option>
+            </select>
+        </div>
+        <h2 id="out" style="text-align:center; color:var(--accent);">0.0625 REM</h2>
+    </div>
+    <script>
+        function convert() {
+            const v = document.getElementById('inVal').value;
+            const m = document.getElementById('mode').value;
+            let res = "";
+            if (m === 'pxrem') res = (v / 16) + " REM";
+            if (m === 'gbtb') res = (v / 1024).toFixed(4) + " TB";
+            if (m === 'mbpsmbs') res = (v / 8).toFixed(2) + " MB/s";
+            document.getElementById('out').innerText = res;
+        }
+    </script>
+</body>
+
+</html>

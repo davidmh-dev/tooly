@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Contrast Checker</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .preview {
+            padding: 40px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); text-align:center; margin-top: 0;">WCAG Contrast Checker</h1>
+        <div class="grid">
+            <div><label style="font-weight:bold;">Background Color</label><input type="color" id="bg" value="#0f172a"
+                    oninput="check()"></div>
+            <div><label style="font-weight:bold;">Text Color</label><input type="color" id="txt" value="#38bdf8"
+                    oninput="check()"></div>
+        </div>
+        <div class="preview" id="prev">Sample Text</div>
+        <div id="result" style="font-size: 1.5rem; text-align: center; font-weight: bold;">Ratio: ...</div>
+        <div id="status" class="status">...</div>
+    </div>
+    <script>
+        function getL(c) {
+            let rgb = parseInt(c.substring(1), 16);
+            let r = (rgb >> 16) & 0xff, g = (rgb >> 8) & 0xff, b = (rgb >> 0) & 0xff;
+            let a = [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+            return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+        }
+        function check() {
+            const b = document.getElementById('bg').value, t = document.getElementById('txt').value;
+            const p = document.getElementById('prev');
+            p.style.backgroundColor = b; p.style.color = t;
+            const l1 = getL(b), l2 = getL(t);
+            const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+            document.getElementById('result').innerText = `Contrast Ratio: ${ratio.toFixed(2)}:1`;
+
+            const status = document.getElementById('status');
+            if (ratio >= 4.5) {
+                status.innerText = "✅ PASS (WCAG AA)";
+                status.style.backgroundColor = "rgba(34, 197, 94, 0.2)";
+                status.style.color = "#4ade80";
+            } else {
+                status.innerText = "❌ FAIL (Low Contrast)";
+                status.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
+                status.style.color = "#fca5a5";
+            }
+        }
+        check();
+    </script>
+</body>
+
+</html>

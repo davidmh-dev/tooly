@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooly - Function Grapher</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #ec4899;
+            --accent2: #0ea5e9;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #cbd5e1;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 6px;
+            outline: none;
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        .f1-input:focus {
+            border-color: var(--accent);
+        }
+
+        .f2-input:focus {
+            border-color: var(--accent2);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #be185d;
+            transform: translateY(-2px);
+        }
+
+        .canvas-container {
+            margin-top: 30px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #000;
+            border-left: 4px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+
+        .intersection {
+            color: #10b981;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>📈 Grapher & Intersections</h1>
+        <p class="subtitle">Mathematical analysis rendered in your browser</p>
+
+        <div class="grid">
+            <div>
+                <label style="color: var(--accent);">Function 1 ( f(x) )</label>
+                <input type="text" id="func1" class="f1-input" placeholder="e.g. x^2 - 4" value="x^2 - 4">
+            </div>
+            <div>
+                <label style="color: var(--accent2);">Function 2 ( g(x) ) [Optional]</label>
+                <input type="text" id="func2" class="f2-input" placeholder="e.g. 2*x + 1">
+            </div>
+        </div>
+
+        <div class="grid-4">
+            <div><label>X Minimum</label><input type="number" id="xMin" value="-10"></div>
+            <div><label>X Maximum</label><input type="number" id="xMax" value="10"></div>
+            <div><label>Y Minimum</label><input type="number" id="yMin" value="-10"></div>
+            <div><label>Y Maximum</label><input type="number" id="yMax" value="10"></div>
+        </div>
+
+        <button onclick="drawGraph()">Render Graph</button>
+
+        <div id="results"></div>
+
+        <div class="canvas-container">
+            <canvas id="graphCanvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let chartInstance = null;
+
+        // Simple mathematical function parser for JS
+        function compileMath(expr) {
+            if (!expr || expr.trim() === "") return null;
+            let safeExpr = expr.toLowerCase()
+                .replace(/\^/g, '**')            // x^2 becomes x**2
+                .replace(/sin\(/g, 'Math.sin(')
+                .replace(/cos\(/g, 'Math.cos(')
+                .replace(/tan\(/g, 'Math.tan(')
+                .replace(/sqrt\(/g, 'Math.sqrt(')
+                .replace(/pi/g, 'Math.PI')
+                .replace(/e/g, 'Math.E');
+
+            return new Function('x', 'return ' + safeExpr);
+        }
+
+        function drawGraph() {
+            const f1Str = document.getElementById('func1').value;
+            const f2Str = document.getElementById('func2').value;
+            const xMin = parseFloat(document.getElementById('xMin').value);
+            const xMax = parseFloat(document.getElementById('xMax').value);
+            const yMin = parseFloat(document.getElementById('yMin').value);
+            const yMax = parseFloat(document.getElementById('yMax').value);
+
+            const f1 = compileMath(f1Str);
+            const f2 = compileMath(f2Str);
+
+            if (!f1) {
+                alert("Please enter at least Function 1.");
+                return;
+            }
+
+            // Generate points
+            const resolution = 500; // Number of points for smoothness
+            const step = (xMax - xMin) / resolution;
+
+            let dataF1 = [];
+            let dataF2 = [];
+            let intersections = [];
+
+            let prevY1 = null;
+            let prevY2 = null;
+            let prevX = null;
+
+            for (let x = xMin; x <= xMax; x += step) {
+                let y1 = null, y2 = null;
+                try { y1 = f1(x); } catch (e) { }
+
+                dataF1.push({ x: x, y: y1 });
+
+                if (f2) {
+                    try { y2 = f2(x); } catch (e) { }
+                    dataF2.push({ x: x, y: y2 });
+
+                    // Intersection logic: If f(x) - g(x) changes sign, they crossed
+                    if (prevY1 !== null && prevY2 !== null && y1 !== null && y2 !== null) {
+                        const prevDiff = prevY1 - prevY2;
+                        const currentDiff = y1 - y2;
+
+                        if (prevDiff * currentDiff <= 0 && Math.abs(currentDiff) < 100) { // < 100 prevents false positives on asymptotes
+                            // Linear approximation for the exact crossing point
+                            const crossX = prevX - prevDiff * (x - prevX) / (currentDiff - prevDiff);
+                            const crossY = f1(crossX);
+
+                            // Only save if it is within the visible Y range
+                            if (crossY >= yMin && crossY <= yMax) {
+                                intersections.push({ x: crossX, y: crossY });
+                            }
+                        }
+                    }
+                }
+                prevX = x;
+                prevY1 = y1;
+                prevY2 = y2;
+            }
+
+            // Show intersection results in HTML
+            const resultsDiv = document.getElementById('results');
+            if (intersections.length > 0) {
+                let txt = `Found ${intersections.length} intersection point(s):<br>`;
+                intersections.forEach((pt, i) => {
+                    txt += `Point ${i + 1}: <span class="intersection">X = ${pt.x.toFixed(3)}, Y = ${pt.y.toFixed(3)}</span><br>`;
+                });
+                resultsDiv.innerHTML = txt;
+                resultsDiv.style.display = 'block';
+            } else {
+                resultsDiv.style.display = 'none';
+            }
+
+            // Prepare dataset for Chart.js
+            const datasets = [{
+                label: `f(x) = ${f1Str}`,
+                data: dataF1,
+                borderColor: '#ec4899',
+                borderWidth: 2,
+                pointRadius: 0, // Hide points to look like a continuous line
+                fill: false
+            }];
+
+            if (f2) {
+                datasets.push({
+                    label: `g(x) = ${f2Str}`,
+                    data: dataF2,
+                    borderColor: '#0ea5e9',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                });
+            }
+
+            // Add intersection points as marked bubbles
+            if (intersections.length > 0) {
+                datasets.push({
+                    label: 'Intersections',
+                    data: intersections,
+                    backgroundColor: '#10b981',
+                    borderColor: '#064e3b',
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    type: 'scatter'
+                });
+            }
+
+            // Render Chart
+            const ctx = document.getElementById('graphCanvas').getContext('2d');
+
+            // Destroy existing chart to draw a new one
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    animation: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: xMin,
+                            max: xMax,
+                            grid: { color: '#e2e8f0' }
+                        },
+                        y: {
+                            type: 'linear',
+                            min: yMin,
+                            max: yMax,
+                            grid: { color: '#e2e8f0' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `X: ${context.parsed.x.toFixed(2)}, Y: ${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Draw a sample graph when the page loads for the first time
+        window.onload = function () {
+            drawGraph();
+        };
+    </script>
+
+</body>
+
+</html>

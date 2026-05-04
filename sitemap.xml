@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Landing Page -->
+  <url>
+    <loc>https://tooly.vercel.app/index.html</loc>
+    <lastmod>2026-05-04</lastmod>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- Tools Folder Content -->
+  <url>
+    <loc>https://tooly.vercel.app/tools/qr-generator.html</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://tooly.vercel.app/tools/name-generator.html</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://tooly.vercel.app/tools/giveaway-picker.html</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://tooly.vercel.app/tools/timezone-converter.html</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://tooly.vercel.app/tools/bmi-calculator.html</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://tooly.vercel.app/tools/date-counter.html</loc>
+    <priority>0.80</priority>
+  </url>
+</urlset>

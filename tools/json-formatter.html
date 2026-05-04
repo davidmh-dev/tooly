@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooly - Secure JSON Formatter</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #eab308;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border: 1px solid var(--border);
+            color: #10b981;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: monospace;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .error {
+            color: #ef4444;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 15px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>{ } Secure JSON Formatter</h1>
+        <p class="subtitle">Format, validate and beautify JSON safely in your browser</p>
+        <div class="grid">
+            <div>
+                <label style="color:#cbd5e1; font-weight:bold; display:block; margin-bottom:5px;">Raw Data</label>
+                <textarea id="input" placeholder='{"name":"John", "age":30, "city":"New York"}'></textarea>
+            </div>
+            <div>
+                <label style="color:#cbd5e1; font-weight:bold; display:block; margin-bottom:5px;">Formatted JSON</label>
+                <textarea id="output" readonly></textarea>
+            </div>
+        </div>
+        <div id="msg" class="error"></div>
+        <div class="grid" style="margin-top: 20px;">
+            <button onclick="formatJSON()">Beautify JSON</button>
+            <button onclick="copyJSON()" style="background:#334155; color:white;">Copy Output</button>
+        </div>
+    </div>
+    <script>
+        function formatJSON() {
+            const input = document.getElementById('input').value;
+            const msg = document.getElementById('msg');
+            try {
+                const parsed = JSON.parse(input);
+                document.getElementById('output').value = JSON.stringify(parsed, null, 4);
+                msg.innerText = "✅ Valid JSON";
+                msg.style.color = "#10b981";
+            } catch (e) {
+                document.getElementById('output').value = "";
+                msg.innerText = "❌ Invalid JSON: " + e.message;
+                msg.style.color = "#ef4444";
+            }
+        }
+        function copyJSON() {
+            navigator.clipboard.writeText(document.getElementById('output').value);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro-Markdown Generator</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #38bdf8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--accent);
+        }
+
+        small {
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            background: #7dd3fc;
+        }
+
+        #output-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        pre {
+            background: #000;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            border: 1px solid var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🚀 Pro-Markdown Generator</h1>
+        <p style="text-align: center; color: #94a3b8;">Create high-quality READMEs in English instantly.</p>
+
+        <div id="form">
+            <div class="form-group">
+                <label>1. Project Name</label>
+                <input type="text" id="p1" placeholder="e.g. TaskMaster-JS">
+            </div>
+
+            <div class="form-group">
+                <label>2. Purpose & Problem</label>
+                <small>What problem does it solve and how?</small>
+                <textarea id="p2" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>3. Tech Stack</label>
+                <small>Which technologies did you use?</small>
+                <input type="text" id="p3" placeholder="React, Node.js, MongoDB...">
+            </div>
+
+            <div class="form-group">
+                <label>4. Installation Steps</label>
+                <small>Command lines to get it running.</small>
+                <textarea id="p4" rows="3" placeholder="npm install && npm start"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>5. Environment Variables (.env)</label>
+                <small>List keys like API_KEY=value</small>
+                <input type="text" id="p5" placeholder="PORT, DATABASE_URL...">
+            </div>
+
+            <div class="form-group">
+                <label>6. Naming Conventions</label>
+                <small>Style of variables/files.</small>
+                <select id="p6">
+                    <option value="camelCase">camelCase</option>
+                    <option value="snake_case">snake_case</option>
+                    <option value="PascalCase">PascalCase</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>7. Folder Structure</label>
+                <small>Describe the main folders and their purpose.</small>
+                <textarea id="p7" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>8. Deployment</label>
+                <small>How is it hosted?</small>
+                <input type="text" id="p8" placeholder="Vercel, Docker, AWS...">
+            </div>
+
+            <div class="form-group">
+                <label>9. Key Features</label>
+                <small>What are the 3 main things it does?</small>
+                <textarea id="p9" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>10. License</label>
+                <select id="p10">
+                    <option value="MIT">MIT</option>
+                    <option value="GNU GPLv3">GNU GPLv3</option>
+                    <option value="Apache 2.0">Apache 2.0</option>
+                    <option value="Proprietary">Proprietary / Private</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>11. Roadmap</label>
+                <small>What's coming next?</small>
+                <input type="text" id="p11" placeholder="Testing, Dark Mode, API v2...">
+            </div>
+
+            <div class="form-group full-width">
+                <label>11. Known Issues</label>
+                <small>Current limitations or bugs.</small>
+                <input type="text" id="p11" placeholder="Not optimized for mobile yet...">
+            </div>
+
+            <button onclick="generateMarkdown()">Generate Markdown File</button>
+        </div>
+
+        <div id="output-container">
+            <label>Your README.md Content:</label>
+            <pre id="output"></pre>
+            <button onclick="copyToClipboard()" style="background: #22c55e; color: white;">Copy to Clipboard</button>
+        </div>
+
+
+    </div>
+
+    <script>
+        function generateMarkdown() {
+            const data = {
+                name: document.getElementById('p1').value || 'Project Name',
+                purpose: document.getElementById('p2').value,
+                tech: document.getElementById('p3').value,
+                install: document.getElementById('p4').value,
+                env: document.getElementById('p5').value,
+                naming: document.getElementById('p6').value,
+                deploy: document.getElementById('p7').value,
+                features: document.getElementById('p8').value,
+                license: document.getElementById('p9').value,
+                roadmap: document.getElementById('p10').value
+            };
+
+            const md = `# ${data.name} 🚀
+
+## 📖 Overview
+${data.purpose}
+
+## 🛠 Tech Stack
+- **Languages/Frameworks:** ${data.tech}
+- **Naming Convention:** ${data.naming}
+
+## 🚀 Key Features
+${data.features.split('\n').map(f => `- ${f}`).join('\n')}
+
+## 📦 Installation & Setup
+\`\`\`bash
+${data.install}
+\`\`\`
+
+## ⚙️ Configuration
+Required Environment Variables (.env):
+\`\`\`text
+${data.env}
+\`\`\`
+
+## 🌐 Deployment
+This project is ready to be deployed on **${data.deploy}**.
+
+## 🗺 Roadmap
+- [x] Initial Release
+${data.roadmap.split(',').map(r => `- [ ] ${r.trim()}`).join('\n')}
+
+## ⚖️ License
+This project is licensed under the **${data.license}** license.
+`;
+
+            document.getElementById('output').textContent = md;
+            document.getElementById('output-container').style.display = 'block';
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('output').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Markdown copied to clipboard!');
+            });
+        }
+    </script>
+
+</body>
+
+</html>

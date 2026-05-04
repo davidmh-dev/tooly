@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Date Difference Pro</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #f472b6;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        .res-panel {
+            margin-top: 20px;
+            padding: 30px;
+            background: #0f172a;
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+        }
+
+        #dayCount {
+            font-size: 3.5rem;
+            font-weight: 800;
+            display: block;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .main-label {
+            color: #f8fafc;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .breakdown {
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            color: #94a3b8;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .breakdown-item span {
+            display: block;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); margin-top: 0; font-size: 1.8rem;">Date Counter</h1>
+
+        <label>Start Date</label>
+        <input type="date" id="date1" onchange="count()">
+
+        <label>End Date</label>
+        <input type="date" id="date2" onchange="count()">
+
+        <div class="res-panel">
+            <span id="dayCount">0</span>
+            <div class="main-label">TOTAL DAYS</div>
+
+            <div class="breakdown">
+                <div class="breakdown-item">
+                    <span id="weekPart">0</span>
+                    Weeks
+                </div>
+                <div class="breakdown-item">
+                    <span id="dayPart">0</span>
+                    Extra Days
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Por defecto, poner la fecha de hoy en la primera casilla
+        document.getElementById('date1').valueAsDate = new Date();
+
+        function count() {
+            const d1 = new Date(document.getElementById('date1').value);
+            const d2 = new Date(document.getElementById('date2').value);
+
+            if (!isNaN(d1) && !isNaN(d2)) {
+                // Calculamos la diferencia absoluta en milisegundos
+                const diffTime = Math.abs(d2 - d1);
+                // Convertimos a días
+                const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                // Calculamos semanas y días restantes
+                const weeks = Math.floor(totalDays / 7);
+                const extraDays = totalDays % 7;
+
+                // Actualizamos la interfaz
+                document.getElementById('dayCount').innerText = totalDays;
+                document.getElementById('weekPart').innerText = weeks;
+                document.getElementById('dayPart').innerText = extraDays;
+            }
+        }
+
+        // Ejecutar al cargar para mostrar diferencia de 0 inicialmente
+        count();
+    </script>
+</body>
+
+</html>

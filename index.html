@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Tooly | All-in-One Free Private Web Tools</title>
+    <meta name="description"
+        content="Access free, secure, and offline tools. From QR generation to timezone conversion, everything runs locally in your browser. 100% client-side.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --card-bg: #161b2b;
+            --accent: #38bdf8;
+            --text: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            color: var(--accent);
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* SEARCH BAR */
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto 40px;
+        }
+
+        #searchBar {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: 1px solid #334155;
+            background: var(--card-bg);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        #searchBar:focus {
+            border-color: var(--accent);
+        }
+
+        #autocomplete-list {
+            position: absolute;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 10px;
+            z-index: 10;
+            border: 1px solid #334155;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .autocomplete-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #334155;
+        }
+
+        .autocomplete-item:hover {
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: bold;
+        }
+
+        /* CARDS GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1050px;
+            margin: 0 auto 60px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            transition: transform 0.3s, border-color 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: #2d3748;
+        }
+
+        .card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Tooly</h1>
+        <p>Zero tokens. Pure logic. Processed locally in your browser.</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="searchBar" placeholder="Search for a tool..." autocomplete="off">
+        <div id="autocomplete-list"></div>
+    </div>
+
+    <div class="grid" id="toolsGrid"></div>
+
+    <script>
+        // 1. EL "CEREBRO" DE DATOS (Nuestra base de datos local)
+        const tools = [
+            {
+                title: "Prompt Architect Generator",
+                url: "prompt-architect.html",
+                img: "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=400&q=80",
+                alt: "Blueprint and design",
+                desc: "Master AI engineering. Build expert prompts with negative constraints, few-shot examples, and chain-of-thought workflows."
+            },
+            {
+                title: "QR Code Generator",
+                url: "qr-generator.html",
+                img: "https://images.unsplash.com/photo-1595079676339-1534801ad6cf?auto=format&fit=crop&w=400&q=80",
+                alt: "QR Code scanning",
+                desc: "Create custom QR codes for URLs, text, or contact info instantly. 100% private and downloadable."
+            },
+            {
+                title: "README file Generator", url: "generator-markdown.html",
+                img: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=400&q=80", alt: "Code",
+                desc: "Create high-quality, professional Markdown documentation for your GitHub projects in seconds."
+            },
+            {
+                title: "Bulk Password Generator", url: "password-generator.html",
+                img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=400&q=80", alt: "Security",
+                desc: "Create hundreds of secure, complex passwords and tokens offline in milliseconds."
+            },
+            /*{
+                title: "Character Mapper", url: "char-mapper.html",
+                img: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80", alt: "Grid of people",
+                desc: "Define millimeter-precise physical traits to generate beautiful literary descriptions for your stories."
+            },
+            {
+                title: "Function Grapher", url: "graficadora.html",
+                img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80", alt: "Graphs",
+                desc: "Render mathematical functions smoothly and find exact intersection points using client-side rendering."
+            },*/
+            {
+                title: "Pro SEO Generator", url: "seo-creator.html",
+                img: "https://images.unsplash.com/photo-1562577309-4932fdd64cd1?auto=format&fit=crop&w=400&q=80", alt: "SEO Code",
+                desc: "Automate your meta tags, Open Graph cards, and deep JSON-LD schemas for maximum search visibility."
+            },
+            {
+                title: "Identity Name Generator",
+                url: "name-generator.html",
+                img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80",
+                alt: "Brand identity design",
+                desc: "Overcome creative blocks with professional name combinations for your next startup, app, or profile."
+            },
+            {
+                title: "Agile Ticket Maker", url: "ticket-creator.html",
+                img: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=400&q=80", alt: "Kanban Board",
+                desc: "Build perfectly structured User Stories, Bug Reports, and Technical Tasks formatted in Markdown."
+            },
+            {
+                title: "Pro Color Picker", url: "color-picker.html",
+                img: "https://images.unsplash.com/photo-1525909002-1b05e0c869d8?auto=format&fit=crop&w=400&q=80", alt: "Color Palette",
+                desc: "Pick colors from any window on your screen or use the interactive color wheel to get instant HEX/RGB values."
+            },
+            {
+                title: "UTM Campaign Builder", url: "utm-builder.html",
+                img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80", alt: "Analytics",
+                desc: "Generate trackable URLs with custom parameters for your marketing and analytics campaigns."
+            },
+            {
+                title: "Secure JSON Formatter", url: "json-formatter.html",
+                img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=400&q=80", alt: "JSON",
+                desc: "Format, validate, and beautify raw JSON data safely and locally in your browser."
+            },
+            {
+                title: "CRON Generator", url: "cron-generator.html",
+                img: "https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=400&q=80", alt: "Clock",
+                desc: "Build CRON expressions visually to schedule your automated server tasks effortlessly."
+            },
+            {
+                title: "Base64 Converter", url: "base64-tool.html",
+                img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80", alt: "Cyber Code",
+                desc: "Securely encode and decode strings to and from Base64 format without server transmission."
+            },
+            {
+                title: "Regex Live Tester", url: "regex-tester.html",
+                img: "https://images.unsplash.com/photo-1457305237443-44c3d5a30b89?auto=format&fit=crop&w=400&q=80", alt: "Search",
+                desc: "Write and test regular expressions in real-time with visual pattern matching highlights."
+            },
+            {
+                title: "CSV to JSON Converter", url: "csv-converter.html",
+                img: "https://images.unsplash.com/photo-1543286386-2e659306cd6c?auto=format&fit=crop&w=400&q=80", alt: "Spreadsheet",
+                desc: "Instantly transform comma-separated spreadsheet data into structured JSON objects."
+            },
+            {
+                title: "Comms Link Builder", url: "comms-builder.html",
+                img: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=400&q=80", alt: "Chat",
+                desc: "Generate one-click WhatsApp and email links with pre-filled messages to boost engagement."
+            },
+            {
+                title: "JWT Inspector", url: "jwt-inspector.html",
+                img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=400&q=80", alt: "Security",
+                desc: "Securely decode and inspect JSON Web Tokens (JWT) entirely offline. Never leak your payloads again."
+            },
+            {
+                title: "Epoch Converter", url: "epoch-converter.html",
+                img: "https://images.unsplash.com/photo-1508962914676-134849a727f0?auto=format&fit=crop&w=400&q=80", alt: "Time",
+                desc: "Instantly convert human-readable dates to Unix timestamps and vice versa for server debugging."
+            },
+            {
+                title: "Hash Generator", url: "hash-generator.html",
+                img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=400&q=80", alt: "Crypto",
+                desc: "Generate cryptographic hashes (MD5, SHA-1, SHA-256) for strings and files right in your browser."
+            },
+            {
+                title: "Text Diff Checker", url: "diff-checker.html",
+                img: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=400&q=80", alt: "Compare",
+                desc: "Compare two blocks of text or code side-by-side to instantly highlight additions and deletions."
+            },
+            {
+                title: "SVG to Base64", url: "svg-to-base64.html",
+                img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80", alt: "Vector",
+                desc: "Convert SVG code or image files into Base64 strings to inline them perfectly into your CSS or HTML."
+            },
+            {
+                title: "Mock Data Generator", url: "mock-generator.html",
+                img: "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=400&q=80", alt: "Data",
+                desc: "Generate massive lists of realistic dummy data (names, emails, addresses) for testing your databases."
+            },
+            {
+                title: "WCAG Contrast Checker", url: "contrast-checker.html",
+                img: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=400&q=80", alt: "Colors",
+                desc: "Ensure your color palettes meet Web Content Accessibility Guidelines (WCAG) for perfect readability."
+            },
+            {
+                title: "SQL Query Formatter", url: "sql-formatter.html",
+                img: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=400&q=80", alt: "Database",
+                desc: "Beautify and format messy SQL queries into clean, readable code securely on your machine."
+            },
+            {
+                title: "Keycode Finder", url: "keycode-finder.html",
+                img: "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=400&q=80", alt: "Keyboard",
+                desc: "Press any key to instantly get its JavaScript event.key, event.code, and numeric keyCode."
+            },
+            {
+                title: "Aspect Ratio Calculator", url: "aspect-calculator.html",
+                img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=400&q=80", alt: "Lens",
+                desc: "Calculate perfect image and video dimensions instantly based on standard aspect ratios."
+            },
+            {
+                title: "URL Parser & Debugger",
+                url: "url-parser.html",
+                img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=400&q=80",
+                alt: "Network connection",
+                desc: "Break down complex URLs into readable components and decode messy query parameters instantly."
+            },
+            {
+                title: "String Manipulator",
+                url: "string-manipulator.html",
+                img: "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?auto=format&fit=crop&w=400&q=80",
+                alt: "Typography and text",
+                desc: "Transform text casing, clean up formatting, and get real-time word and character counts offline."
+            },
+            {
+                title: "Lorem Ipsum Plus", url: "lorem-plus.html",
+                img: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=400&q=80", alt: "Text",
+                desc: "Generate custom placeholder text, lists, and dummy code blocks for your design mockups."
+            },
+            {
+                title: "Image Converter", url: "image-converter.html",
+                img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80", alt: "Tech",
+                desc: "Quickly convert and optimize images between formats like PNG, JPG, and WebP 100% offline."
+            },
+            {
+                title: "Robots.txt Generator", url: "robots-gen.html",
+                img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=400&q=80", alt: "Robot",
+                desc: "Easily create a professional robots.txt file to guide search engine crawlers and improve SEO."
+            },
+            {
+                title: "JSON to CSV", url: "json-to-csv.html",
+                img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80", alt: "Data",
+                desc: "Transform structured JSON data into a clean, downloadable CSV file for spreadsheet analysis."
+            },
+            {
+                title: "Network & Info", url: "network-info.html",
+                img: "https://images.unsplash.com/photo-1551739440-5dd934d3a94a?auto=format&fit=crop&w=400&q=80", alt: "Server",
+                desc: "Check your public IP, local network details, and browser fingerprints in one click."
+            },
+            {
+                title: "Snippet Beautifier", url: "code-to-img.html",
+                img: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&w=400&q=80", alt: "Programming",
+                desc: "Turn your code snippets into beautiful, high-resolution images ready for social media or docs."
+            },
+            {
+                title: "Unit Converter", url: "unit-converter.html",
+                img: "https://images.unsplash.com/photo-1557683311-eac922347aa1?auto=format&fit=crop&w=400&q=80", alt: "Abstract",
+                desc: "A specialized converter for digital units like Pixels to REM, Data sizes, and Network speeds."
+            },
+            {
+                title: "World Time Converter",
+                url: "timezone-converter.html",
+                img: "https://images.unsplash.com/photo-1508962914676-13483350248b?auto=format&fit=crop&w=400&q=80",
+                alt: "World clock",
+                desc: "Convert your local time to any major worldwide timezone instantly. 100% offline calculation."
+            },
+            {
+                title: "Favicon Generator", url: "favicon-gen.html",
+                img: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=400&q=80", alt: "Design",
+                desc: "Create all necessary favicon sizes for your website from a single image or emoji."
+            },
+            {
+                title: "Palette Extractor", url: "palette-extractor.html",
+                img: "https://images.unsplash.com/photo-1525909002-1b05e0c869d8?auto=format&fit=crop&w=400&q=80", alt: "Colors",
+                desc: "Upload any image to automatically extract its dominant color palette and hex codes."
+            },
+            {
+                title: "Winner Picker",
+                url: "giveaway-picker.html",
+                img: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=400&q=80",
+                alt: "Celebration and confetti",
+                desc: "Fairly select one or multiple winners from a list of participants. Ideal for contests, raffles, and group decisions."
+            },
+            {
+                title: "List Randomizer", url: "list-randomizer.html",
+                img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=400&q=80", alt: "Dice",
+                desc: "Mix up your lists or pick a random winner from a set of names with total fairness."
+            },
+            {
+                title: "BMI Calculator",
+                url: "bmi-calculator.html",
+                img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=400&q=80",
+                alt: "Medical health check",
+                desc: "Calculate your Body Mass Index (BMI) and health status instantly. Stay on track with your fitness goals."
+            },
+            {
+                title: "Date Counter",
+                url: "date-counter.html",
+                img: "https://images.unsplash.com/photo-1506784919141-93ad54942f74?auto=format&fit=crop&w=400&q=80",
+                alt: "Calendar and planning",
+                desc: "Calculate the exact number of days between two dates. Perfect for event planning and contract tracking."
+            }
+        ];
+
+        // DOM Elements
+        const grid = document.getElementById('toolsGrid');
+        const searchBar = document.getElementById('searchBar');
+        const list = document.getElementById('autocomplete-list');
+
+        // 2. FUNCIÓN PARA PINTAR LAS TARJETAS DINÁMICAMENTE
+        function renderCards(dataArray) {
+            // Limpiamos el grid
+            grid.innerHTML = '';
+
+            // Si no hay resultados, mostramos un mensaje
+            if (dataArray.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; grid-column: 1 / -1; color: #ef4444;">No tools found matching your search.</p>';
+                return;
+            }
+
+            // Iteramos y creamos el HTML de cada tarjeta
+            dataArray.forEach(t => {
+                const cardHTML = `
+                <a href="tools/${t.url}" class="card" data-title="${t.title}">
+                    <img src="${t.img}" alt="${t.alt}">
+                    <div class="card-content">
+                        <div class="card-title">${t.title}</div>
+                        <p class="card-desc">${t.desc}</p>
+                    </div>
+                </a>
+            `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        // Inicializamos pintando TODAS las tarjetas
+        renderCards(tools);
+
+        // 3. NUEVA LÓGICA DEL BUSCADOR (Filtra el array y vuelve a pintar)
+        searchBar.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            list.innerHTML = '';
+
+            // Autocompletado del buscador
+            if (val) {
+                const filteredTitles = tools.filter(t => t.title.toLowerCase().includes(val));
+                filteredTitles.forEach(t => {
+                    const div = document.createElement('div');
+                    div.innerHTML = t.title;
+                    div.className = 'autocomplete-item';
+                    div.onclick = () => { window.location.href = t.url; };
+                    list.appendChild(div);
+                });
+            }
+
+            // Filtramos el array principal buscando en el título o en la descripción
+            const filteredCards = tools.filter(t => {
+                return t.title.toLowerCase().includes(val) || t.desc.toLowerCase().includes(val);
+            });
+
+            // Volvemos a pintar solo las tarjetas que coinciden
+            renderCards(filteredCards);
+        });
+
+        // Cerrar la lista de autocompletado si haces clic fuera
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchBar) list.innerHTML = '';
+        });
+    </script>
+
+</body>
+
+</html>

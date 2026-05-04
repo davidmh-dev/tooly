@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - String Manipulator</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #f472b6;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 15px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            outline: none;
+            margin-bottom: 10px;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .stats-bar span b {
+            color: var(--accent);
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px;
+            background: #334155;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); text-align:center; margin-top: 0;">String Manipulator</h1>
+
+        <div class="stats-bar">
+            <span>Characters: <b id="charCount">0</b></span>
+            <span>Words: <b id="wordCount">0</b></span>
+            <span>Lines: <b id="lineCount">0</b></span>
+        </div>
+
+        <textarea id="textInput" oninput="updateStats()" placeholder="Paste or type your text here..."></textarea>
+
+        <div class="btn-grid">
+            <button onclick="transform('up')">UPPERCASE</button>
+            <button onclick="transform('low')">lowercase</button>
+            <button onclick="transform('title')">Title Case</button>
+            <button onclick="transform('camel')">camelCase</button>
+            <button onclick="transform('snake')">snake_case</button>
+            <button onclick="transform('kebab')">kebab-case</button>
+            <button onclick="transform('trim')">Trim Spaces</button>
+            <button onclick="copyText()" style="background: #10b981; color: #000;">Copy Text</button>
+        </div>
+    </div>
+    <script>
+        const input = document.getElementById('textInput');
+        function updateStats() {
+            const val = input.value;
+            document.getElementById('charCount').innerText = val.length;
+            document.getElementById('wordCount').innerText = val.trim() ? val.trim().split(/\s+/).length : 0;
+            document.getElementById('lineCount').innerText = val.trim() ? val.split(/\n/).length : 0;
+        }
+        function transform(type) {
+            let val = input.value;
+            if (type === 'up') val = val.toUpperCase();
+            if (type === 'low') val = val.toLowerCase();
+            if (type === 'trim') val = val.replace(/\s+/g, ' ').trim();
+            if (type === 'title') val = val.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+            if (type === 'snake' || type === 'kebab' || type === 'camel') {
+                val = val.replace(/[^\w\s]/g, '').toLowerCase().split(/\s+/);
+                if (type === 'snake') val = val.join('_');
+                if (type === 'kebab') val = val.join('-');
+                if (type === 'camel') val = val.map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.substring(1)).join('');
+            }
+            input.value = val;
+            updateStats();
+        }
+        function copyText() { navigator.clipboard.writeText(input.value); alert("Copied!"); }
+    </script>
+</body>
+
+</html>

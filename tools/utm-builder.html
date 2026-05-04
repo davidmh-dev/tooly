@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooly - UTM Campaign Builder</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #f97316;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #cbd5e1;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 6px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        .result-box {
+            margin-top: 25px;
+            background: #000;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent);
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔗 UTM Campaign Builder</h1>
+        <p class="subtitle">Generate trackable URLs for your marketing campaigns</p>
+        <div class="grid">
+            <div class="full"><label>Website URL (Required)</label><input type="url" id="url"
+                    placeholder="https://example.com" oninput="buildUTM()"></div>
+            <div><label>Campaign Source (utm_source)</label><input type="text" id="source"
+                    placeholder="e.g. google, newsletter" oninput="buildUTM()"></div>
+            <div><label>Campaign Medium (utm_medium)</label><input type="text" id="medium" placeholder="e.g. cpc, email"
+                    oninput="buildUTM()"></div>
+            <div><label>Campaign Name (utm_campaign)</label><input type="text" id="campaign"
+                    placeholder="e.g. spring_sale" oninput="buildUTM()"></div>
+            <div><label>Campaign Term (utm_term) [Optional]</label><input type="text" id="term"
+                    placeholder="e.g. running+shoes" oninput="buildUTM()"></div>
+        </div>
+        <div class="result-box" id="result">https://example.com</div>
+        <button onclick="copyUTM()">📋 Copy URL</button>
+    </div>
+    <script>
+        function buildUTM() {
+            const v = id => document.getElementById(id).value.trim();
+            let baseUrl = v('url');
+            if (!baseUrl) { document.getElementById('result').innerText = "Waiting for valid URL..."; return; }
+            if (!baseUrl.startsWith('http')) baseUrl = 'https://' + baseUrl;
+
+            try {
+                let urlObj = new URL(baseUrl);
+                if (v('source')) urlObj.searchParams.set('utm_source', v('source'));
+                if (v('medium')) urlObj.searchParams.set('utm_medium', v('medium'));
+                if (v('campaign')) urlObj.searchParams.set('utm_campaign', v('campaign'));
+                if (v('term')) urlObj.searchParams.set('utm_term', v('term'));
+                document.getElementById('result').innerText = urlObj.toString();
+            } catch (e) {
+                document.getElementById('result').innerText = "Invalid URL format.";
+            }
+        }
+        function copyUTM() {
+            navigator.clipboard.writeText(document.getElementById('result').innerText);
+            alert("UTM URL copied!");
+        }
+    </script>
+</body>
+
+</html>

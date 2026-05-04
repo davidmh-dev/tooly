@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Specific bots like GPTBot or Google-Extended are allowed
+User-agent: GPTBot
+Allow: /
+
+Sitemap: https://tooly.vercel.app/sitemap.xml

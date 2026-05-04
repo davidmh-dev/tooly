@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Prompt Architect Pro</title>
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --card: #161b2b;
+            --accent: #8b5cf6;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .form-side {
+            height: 85vh;
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+
+        .preview-side {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        h1 {
+            color: var(--accent);
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+
+        .step {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        span.hint {
+            display: block;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        textarea,
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            outline: none;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+        }
+
+        .result-box {
+            background: #000;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--accent);
+            min-height: 400px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        .copy-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 1rem;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Scrollbar styling */
+        .form-side::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .form-side::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="form-side">
+            <h1>Prompt Architect Pro</h1>
+
+            <div class="step">
+                <label>Persona & Context</label>
+                <span class="hint">Define the AI's role and the situation. (e.g., "Senior SEO specialist with 10 years
+                    experience").</span>
+                <textarea id="ctx" oninput="build()" placeholder="You are an expert..."></textarea>
+            </div>
+
+            <div class="step">
+                <label>The Task (Goal)</label>
+                <span class="hint">What is the exact output needed?</span>
+                <textarea id="task" oninput="build()" placeholder="Write a blog post about..."></textarea>
+            </div>
+
+            <div class="step">
+                <label>Steps / Workflow</label>
+                <span class="hint">Tell the AI the logical order of thinking (e.g., "First analyze X, then compare
+                    Y").</span>
+                <textarea id="steps" oninput="build()"
+                    placeholder="1. Research the keywords... 2. Draft the intro..."></textarea>
+            </div>
+
+            <div class="step">
+                <label>Constraints (The "Don'ts")</label>
+                <span class="hint">What should be avoided? (e.g., "No jargon", "Don't mention competitors").</span>
+                <textarea id="neg" oninput="build()" placeholder="Avoid using clichés or passive voice."></textarea>
+            </div>
+
+            <div class="step">
+                <label>Examples (Few-Shot)</label>
+                <span class="hint">Provide a sample of the desired output style.</span>
+                <textarea id="ex" oninput="build()" placeholder="Input: X -> Output: Y"></textarea>
+            </div>
+
+            <div class="step">
+                <label>Tone & Audience</label>
+                <textarea id="tone" oninput="build()" placeholder="Formal, witty, for beginners..."></textarea>
+            </div>
+        </div>
+
+        <div class="preview-side">
+            <label>Final Compiled Prompt</label>
+            <div class="result-box" id="final">Waiting for architecture...</div>
+            <button class="copy-btn" onclick="copy()">📋 Copy Prompt</button>
+        </div>
+    </div>
+
+    <script>
+        function build() {
+            const get = id => document.getElementById(id).value.trim();
+            const ctx = get('ctx'), task = get('task'), steps = get('steps'), neg = get('neg'), ex = get('ex'), tone = get('tone');
+
+            if (!ctx && !task) { document.getElementById('final').innerText = "Start typing to build your prompt..."; return; }
+
+            let p = "";
+            if (ctx) p += `### ROLE & CONTEXT\n${ctx}\n\n`;
+            if (task) p += `### MAIN TASK\n${task}\n\n`;
+            if (steps) p += `### PROCESS STEPS\n${steps}\n\n`;
+            if (neg) p += `### CONSTRAINTS & NEGATIVE PROMPTING\n- ${neg.replace(/\n/g, '\n- ')}\n\n`;
+            if (ex) p += `### EXAMPLES / FEW-SHOT\n${ex}\n\n`;
+            if (tone) p += `### TONE & AUDIENCE\n${tone}\n\n`;
+
+            p += `### GO!`;
+            document.getElementById('final').innerText = p;
+        }
+
+        function copy() {
+            navigator.clipboard.writeText(document.getElementById('final').innerText);
+            alert("Prompt Architect: Data copied to clipboard.");
+        }
+    </script>
+
+</body>
+
+</html>

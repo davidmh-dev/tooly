@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Robots.txt Gen</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #f59e0b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); margin-top:0;">Robots.txt Generator</h1>
+        <label>Sitemap URL (Optional)</label>
+        <input type="text" id="sitemap" oninput="gen()" placeholder="https://example.com/sitemap.xml">
+        <label>Disallow Paths (one per line)</label>
+        <textarea id="paths" oninput="gen()" placeholder="/admin&#10;/private"></textarea>
+        <h3>Result:</h3>
+        <pre id="out">User-agent: *&#10;Disallow: /</pre>
+    </div>
+    <script>
+        function gen() {
+            const s = document.getElementById('sitemap').value;
+            const p = document.getElementById('paths').value.split('\n').filter(x => x.trim());
+            let res = "User-agent: *\n";
+            p.forEach(path => res += `Disallow: ${path.trim()}\n`);
+            if (s) res += `Sitemap: ${s}\n`;
+            document.getElementById('out').innerText = res;
+        }
+    </script>
+</body>
+
+</html>

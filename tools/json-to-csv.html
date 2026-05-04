@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - JSON to CSV</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #2dd4bf;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 10px;
+            font-family: monospace;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            border: none;
+            font-weight: bold;
+            margin-top: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); text-align:center;">JSON to CSV Converter</h1>
+        <textarea id="json" placeholder='[{"name":"John", "age":30}, {"name":"Jane", "age":25}]'></textarea>
+        <button onclick="convert()">Convert & Download CSV</button>
+    </div>
+    <script>
+        function convert() {
+            try {
+                const arr = JSON.parse(document.getElementById('json').value);
+                const headers = Object.keys(arr[0]).join(',');
+                const rows = arr.map(obj => Object.values(obj).join(',')).join('\n');
+                const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + rows;
+                const link = document.createElement("a");
+                link.setAttribute("href", encodeURI(csvContent));
+                link.setAttribute("download", "data.csv");
+                link.click();
+            } catch (e) { alert("Invalid JSON Array"); }
+        }
+    </script>
+</body>
+
+</html>

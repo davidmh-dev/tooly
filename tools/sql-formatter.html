@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - SQL Formatter</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #a78bfa;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            background: #000;
+            color: #a78bfa;
+            border: 1px solid var(--border);
+            padding: 15px;
+            box-sizing: border-box;
+            font-family: monospace;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); text-align:center; margin-top: 0;">SQL Query Formatter</h1>
+        <label style="font-weight:bold; margin-bottom:5px; display:block;">Raw SQL Query</label>
+        <textarea id="sql"
+            placeholder="SELECT id, name, email FROM users WHERE status = 'active' ORDER BY created_at DESC LIMIT 10"></textarea>
+        <button onclick="format()">Beautify SQL</button>
+    </div>
+    <script>
+        function format() {
+            let sql = document.getElementById('sql').value;
+            // Basic offline SQL formatter
+            const keywords = ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'ORDER BY', 'GROUP BY', 'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'LEFT JOIN', 'INNER JOIN', 'LIMIT'];
+
+            // Remove extra spaces first
+            sql = sql.replace(/\s+/g, ' ');
+
+            keywords.forEach(k => {
+                const re = new RegExp(`\\b${k}\\b`, 'gi');
+                sql = sql.replace(re, `\n${k.toUpperCase()}`);
+            });
+            document.getElementById('sql').value = sql.trim();
+        }
+    </script>
+</body>
+
+</html>

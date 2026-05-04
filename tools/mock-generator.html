@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Mock Data</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #22c55e;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        button {
+            padding: 15px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 1.1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 350px;
+            background: #000;
+            color: var(--accent);
+            margin-top: 20px;
+            font-family: monospace;
+            padding: 15px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); text-align:center; margin-top: 0;">Mock Data Generator</h1>
+        <p style="text-align:center; color:#94a3b8;">Generate dummy JSON profiles for testing</p>
+        <button onclick="generate()">Generate 10 Random Profiles</button>
+        <textarea id="out" readonly placeholder="JSON will appear here..."></textarea>
+    </div>
+    <script>
+        function generate() {
+            const names = ['Alice', 'Bob', 'Charlie', 'Diana', 'Edward', 'Fiona', 'George', 'Hannah'];
+            const domains = ['gmail.com', 'outlook.com', 'tooly.dev', 'company.com'];
+            const roles = ['Admin', 'User', 'Editor', 'Viewer'];
+            let data = [];
+            for (let i = 0; i < 10; i++) {
+                const name = names[Math.floor(Math.random() * names.length)];
+                data.push({
+                    id: Math.floor(Math.random() * 10000),
+                    name: name,
+                    email: `${name.toLowerCase()}${Math.floor(Math.random() * 100)}@${domains[Math.floor(Math.random() * domains.length)]}`,
+                    role: roles[Math.floor(Math.random() * roles.length)],
+                    active: Math.random() > 0.3
+                });
+            }
+            document.getElementById('out').value = JSON.stringify(data, null, 4);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Randomizer</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #f472b6;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container"
+        style="background:var(--card); padding:30px; border-radius:12px; border:1px solid var(--border);">
+        <h1 style="color:var(--accent);">List Randomizer</h1>
+        <textarea id="list" placeholder="Enter items, one per line..."></textarea>
+        <div class="btns">
+            <button onclick="shuffle()" style="background:var(--accent); color:white;">Shuffle List</button>
+            <button onclick="pick()" style="background:#334155; color:white;">Pick Random Winner</button>
+        </div>
+    </div>
+    <script>
+        function shuffle() {
+            const area = document.getElementById('list');
+            const items = area.value.split('\n').filter(x => x.trim());
+            items.sort(() => Math.random() - 0.5);
+            area.value = items.join('\n');
+        }
+        function pick() {
+            const items = document.getElementById('list').value.split('\n').filter(x => x.trim());
+            if (items.length) alert("Winner: " + items[Math.floor(Math.random() * items.length)]);
+        }
+    </script>
+</body>
+
+</html>

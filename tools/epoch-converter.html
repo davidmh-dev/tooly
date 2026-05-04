@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tooly - Epoch Converter</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #fbbf24;
+            --border: #334155;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            padding: 20px;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            color: #cbd5e1;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            background: #000;
+            color: var(--accent);
+            border: 1px solid var(--border);
+            font-size: 1.2rem;
+            text-align: center;
+            border-radius: 6px;
+            box-sizing: border-box;
+            outline: none;
+            font-family: monospace;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        input[type="datetime-local"] {
+            font-family: sans-serif;
+        }
+
+        .res {
+            margin-top: 30px;
+            padding: 20px;
+            background: #000;
+            border-radius: 6px;
+            font-weight: bold;
+            border: 1px solid var(--border);
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .iso-text {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color:var(--accent); margin-top: 0; text-align:center;">Epoch Time Converter</h1>
+        <p style="text-align:center; color:#94a3b8;">Convert bidirectionally between Unix timestamps and local dates.
+        </p>
+
+        <div class="grid">
+            <div>
+                <label>Unix Timestamp (Seconds)</label>
+                <input type="number" id="ts" value="1682773200" oninput="fromTimestamp()">
+            </div>
+
+            <div>
+                <label>Local Date & Time</label>
+                <input type="datetime-local" id="dt" oninput="fromDate()">
+            </div>
+        </div>
+
+        <div class="res">
+            <div id="human">...</div>
+            <div class="iso-text" id="iso">...</div>
+        </div>
+    </div>
+
+    <script>
+        // Función auxiliar para formatear la fecha para el input datetime-local (YYYY-MM-DDTHH:mm)
+        function formatForInput(date) {
+            const pad = n => n < 10 ? '0' + n : n;
+            return date.getFullYear() + '-' +
+                pad(date.getMonth() + 1) + '-' +
+                pad(date.getDate()) + 'T' +
+                pad(date.getHours()) + ':' +
+                pad(date.getMinutes());
+        }
+
+        // Se ejecuta cuando el usuario escribe el número (Timestamp)
+        function fromTimestamp() {
+            const val = document.getElementById('ts').value;
+            if (!val) return;
+
+            const d = new Date(val * 1000);
+
+            // Actualizamos el texto de abajo
+            document.getElementById('human').innerText = d.toLocaleString() || "Invalid Date";
+            document.getElementById('iso').innerText = d.toISOString() || "";
+
+            // Actualizamos el calendario para que coincida (ignoramos los segundos para que encaje)
+            if (!isNaN(d.getTime())) {
+                document.getElementById('dt').value = formatForInput(d);
+            }
+        }
+
+        // Se ejecuta cuando el usuario elige una fecha en el calendario
+        function fromDate() {
+            const val = document.getElementById('dt').value;
+            if (!val) return;
+
+            const d = new Date(val);
+
+            // Actualizamos el número (Timestamp en segundos)
+            const tsValue = Math.floor(d.getTime() / 1000);
+            document.getElementById('ts').value = tsValue;
+
+            // Actualizamos el texto de abajo
+            document.getElementById('human').innerText = d.toLocaleString();
+            document.getElementById('iso').innerText = d.toISOString();
+        }
+
+        // Inicializar la herramienta con el valor por defecto
+        fromTimestamp();
+    </script>
+</body>
+
+</html>

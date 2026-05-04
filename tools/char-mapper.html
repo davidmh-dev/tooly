@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooly - Ultimate Character Mapper</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #fbbf24;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .section-title {
+            margin-top: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #cbd5e1;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            margin-top: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #f59e0b;
+            transform: translateY(-2px);
+        }
+
+        #result-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        #result {
+            padding: 25px;
+            background: #000;
+            border-left: 4px solid var(--accent);
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: #e2e8f0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .copy-btn {
+            background: #334155;
+            color: white;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>👤 Ultimate Character Mapper</h1>
+        <p class="subtitle">Generador de descripciones literarias milimétricas</p>
+
+        <div class="section-title">Primera Impresión</div>
+        <div class="grid">
+            <div><label>Edad Aparente</label>
+                <select id="edad">
+                    <option>en su tierna infancia</option>
+                    <option>en plena adolescencia</option>
+                    <option>en la veintena</option>
+                    <option>rondando los treinta</option>
+                    <option>en su madurez</option>
+                    <option>en el ocaso de su vida</option>
+                    <option>de edad indefinible</option>
+                </select>
+            </div>
+            <div><label>Etnia / Origen Visual</label>
+                <select id="etnia">
+                    <option>caucásico</option>
+                    <option>mediterráneo</option>
+                    <option>afrodescendiente</option>
+                    <option>asiático</option>
+                    <option>latino</option>
+                    <option>nórdico</option>
+                    <option>mestizo</option>
+                    <option>de rasgos exóticos e inusuales</option>
+                </select>
+            </div>
+            <div><label>Altura</label>
+                <select id="altura">
+                    <option>imponente y alto</option>
+                    <option>de estatura media</option>
+                    <option>bajo pero proporcionado</option>
+                    <option>inusualmente alto y desgarbado</option>
+                    <option>menudo y frágil</option>
+                </select>
+            </div>
+            <div><label>Tipo de Cuerpo</label>
+                <select id="cuerpo">
+                    <option>atlético y fibroso</option>
+                    <option>corpulento y musculoso</option>
+                    <option>delgado y esbelto</option>
+                    <option>de formas suaves y redondeadas</option>
+                    <option>enjuto y huesudo</option>
+                    <option>de ancha envergadura</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-title">Estructura Facial y Pelo</div>
+        <div class="grid">
+            <div><label>Forma del Rostro</label>
+                <select id="rostro">
+                    <option>ovalado y armónico</option>
+                    <option>cuadrado y de mandíbula marcada</option>
+                    <option>anguloso y afilado</option>
+                    <option>redondeado y afable</option>
+                    <option>en forma de corazón</option>
+                </select>
+            </div>
+            <div><label>Tono de Piel</label>
+                <select id="piel">
+                    <option>pálida como la porcelana</option>
+                    <option>tostada por el sol</option>
+                    <option>de un profundo tono ébano</option>
+                    <option>cetrina y olivácea</option>
+                    <option>salpicada de pecas</option>
+                    <option>curtida y áspera</option>
+                </select>
+            </div>
+            <div><label>Estilo de Cabello</label>
+                <select id="pelo">
+                    <option>largo y lacio</option>
+                    <option>corto y rebelde</option>
+                    <option>en rizos salvajes</option>
+                    <option>rapado al cero</option>
+                    <option>completamente calvo</option>
+                    <option>ondulado y cuidado</option>
+                    <option>recogido de forma austera</option>
+                </select>
+            </div>
+            <div><label>Color de Cabello</label>
+                <select id="colorPelo">
+                    <option>negro azabache</option>
+                    <option>castaño ceniza</option>
+                    <option>rubio trigo</option>
+                    <option>pelirrojo fuego</option>
+                    <option>gris plateado</option>
+                    <option>blanco nieve</option>
+                    <option>inexistente (calvo)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-title">Mirada y Rasgos Específicos</div>
+        <div class="grid">
+            <div><label>Color de Ojos</label>
+                <select id="ojos">
+                    <option>marrón profundo</option>
+                    <option>azul hielo</option>
+                    <option>verde esmeralda</option>
+                    <option>gris tormenta</option>
+                    <option>miel dorada</option>
+                    <option>negro insondable</option>
+                    <option>heterocromáticos (distinto color)</option>
+                </select>
+            </div>
+            <div><label>Tipo de Mirada</label>
+                <select id="mirada">
+                    <option>penetrante y analítica</option>
+                    <option>cálida y acogedora</option>
+                    <option>perdida y melancólica</option>
+                    <option>desafiante y altiva</option>
+                    <option>esquiva y nerviosa</option>
+                    <option>cansada y sabia</option>
+                </select>
+            </div>
+            <div><label>Nariz</label>
+                <select id="nariz">
+                    <option>recta y clásica</option>
+                    <option>aguileña y prominente</option>
+                    <option>pequeña y respingona</option>
+                    <option>chata y ancha</option>
+                    <option>torcida (como si se la hubieran roto)</option>
+                </select>
+            </div>
+            <div><label>Orejas</label>
+                <select id="orejas">
+                    <option>pequeñas y pegadas</option>
+                    <option>ligeramente puntiagudas</option>
+                    <option>prominentes</option>
+                    <option>ocultas por el cabello</option>
+                </select>
+            </div>
+            <div><label>Vello Facial</label>
+                <select id="vello">
+                    <option>el rostro completamente rasurado</option>
+                    <option>una barba de tres días</option>
+                    <option>una barba espesa y cuidada</option>
+                    <option>una barba larga y descuidada</option>
+                    <option>un bigote perfilado</option>
+                    <option>perilla puntiaguda</option>
+                    <option>sin vello facial</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-title">Aura y Presencia</div>
+        <div class="grid">
+            <div><label>Tipo de Voz</label>
+                <select id="voz">
+                    <option>profunda y grave</option>
+                    <option>suave y aterciopelada</option>
+                    <option>rasposa y rota</option>
+                    <option>aguda y clara</option>
+                    <option>monótona y fría</option>
+                    <option>musical y rítmica</option>
+                </select>
+            </div>
+            <div style="grid-column: span 2;"><label>Marcas Distintivas (Opcional)</label>
+                <input type="text" id="marcas"
+                    placeholder="Ej: Una cicatriz que le cruza la ceja izquierda, un tatuaje descolorido en el cuello...">
+            </div>
+        </div>
+
+        <button onclick="generarDescripcion()">Generar Descripción Literaria</button>
+
+        <div id="result-container">
+            <div id="result"></div>
+            <button class="copy-btn" onclick="copiarTexto()">📋 Copiar para mi novela</button>
+        </div>
+    </div>
+
+    <script>
+        function generarDescripcion() {
+            const v = (id) => document.getElementById(id).value;
+
+            // Párrafo 1: Primera Impresión y Físico
+            let par1 = `A primera vista, su figura resulta inconfundible. Se trata de alguien ${v('altura')}, con una complexión ${v('cuerpo')} que domina el espacio a su alrededor. De evidentes rasgos de origen ${v('etnia')}, aparenta estar ${v('edad')}. Su piel, ${v('piel')}, parece envolver una historia que aún no ha sido contada.`;
+
+            // Párrafo 2: Cabeza, Pelo y Rasgos
+            let peloTexto = v('pelo') === 'completamente calvo' ? 'completamente calvo, dejando al descubierto la forma de su cráneo' : `un cabello ${v('colorPelo')} y ${v('pelo')}`;
+            let par2 = `Al detenerse en su rostro ${v('rostro')}, uno nota cómo está enmarcado por ${peloTexto}. Su perfil está marcado por una nariz ${v('nariz')} y unas orejas ${v('orejas')}. Completa su fisionomía ${v('vello')}.`;
+
+            // Párrafo 3: Mirada y Voz
+            let par3 = `Pero son sus ojos de un ${v('ojos')} los que verdaderamente atrapan la atención; sostienen una mirada ${v('mirada')} que rara vez deja indiferente a su interlocutor. Cuando finalmente rompe el silencio, su voz resuena ${v('voz')}, dotando a sus palabras de una textura única.`;
+
+            // Detalles adicionales
+            let marcas = v('marcas');
+            let par4 = marcas ? `<br><br>Sin embargo, el rasgo más distintivo que atesora es ${marcas.toLowerCase()}, un detalle que rompe cualquier simetría y le otorga un carácter irrepetible.` : '';
+
+            const textFinal = `${par1}<br><br>${par2}<br><br>${par3}${par4}`;
+
+            const resDiv = document.getElementById('result');
+            resDiv.innerHTML = textFinal;
+            document.getElementById('result-container').style.display = 'block';
+        }
+
+        function copiarTexto() {
+            const texto = document.getElementById('result').innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('¡Descripción copiada al portapapeles!');
+            });
+        }
+    </script>
+
+</body>
+
+</html>
