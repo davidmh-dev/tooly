@@ -7,7 +7,44 @@
         content="Access free, secure, and offline tools. From QR generation to timezone conversion, everything runs locally in your browser. 100% client-side.">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Tooly",
+        "url": "https://tooly.vercel.app",
+        "description": "A comprehensive suite of lightweight, private, and offline-first web tools for developers and productivity. No data ever leaves your browser.",
+        "applicationCategory": "UtilitiesApplication",
+        "genre": "Open Source Utilities",
+        "browserRequirements": "Requires JavaScript",
+        "softwareVersion": "1.0.0",
+        "operatingSystem": "All",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "David M.",
+            "jobTitle": "Web Developer",
+            "sameAs": [
+            "https://github.com/davidmh-dev/tooly",
+            "https://www.linkedin.com/in/david-martinez-hernandez-3b057377/"
+            ]
+        },
+        "featureList": [
+            "Instant QR Code Generator",
+            "AI-Inspired Brand Name Generator",
+            "Random Giveaway & Winner Picker",
+            "Secure Local PDF Text Extractor",
+            "Global Timezone Converter with Live Search",
+            "Real-time Currency Exchange Converter",
+            "Health-focused BMI Calculator",
+            "Advanced Date & Weeks Difference Counter"
+        ]
+    }
+    </script>
     <style>
         :root {
             --bg: #0b0f1a;
@@ -140,6 +177,63 @@
             color: #94a3b8;
             line-height: 1.5;
             margin: 0;
+        }
+
+        footer {
+            margin-top: 80px;
+            padding: 40px 20px;
+            background: #0f172a;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .footer-bio h3 {
+            color: #f8fafc;
+            margin-bottom: 8px;
+        }
+
+        .footer-bio p {
+            max-width: 600px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .footer-link {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: #f472b6;
+            /* Un toque de color al pasar el ratón */
+        }
+
+        .github-badge {
+            background: #1e293b;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #334155;
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -461,6 +555,26 @@
             if (e.target !== searchBar) list.innerHTML = '';
         });
     </script>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-bio">
+                <h3>Created by David M.</h3>
+                <p>Web Developer and Privacy Advocate. I build lightweight, local-first tools to help developers
+                    and creators work more efficiently without compromising their data.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="https://www.linkedin.com/in/david-martinez-hernandez-3b057377/" target="_blank"
+                    class="footer-link">
+                    LinkedIn
+                </a>
+                <a href="https://github.com/davidmh-dev/tooly" target="_blank" class="footer-link">
+                    GitHub Repository
+                </a>
+            </div>
+        </div>
+    </footer>
 
 </body>
 
